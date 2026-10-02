@@ -1,114 +1,75 @@
-# Список мероприятий
+# React + TypeScript + Vite
 
-## Описание
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Создай веб-приложение, которое:
+Currently, two official plugins are available:
 
-- Отображает список мероприятий.
-- Валидирует поля ввода.
-- Позволяет добавить новое мероприятие с полями: **название** и **дата**.
-- Редактирует мероприятия.
-- Удаляет мероприятие из списка.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
----
+## React Compiler
 
-## Технические требования
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### Frontend
+## Expanding the ESLint configuration
 
-- **React + TypeScript**
-- Минимальная стилизация (достаточно стандартных HTML-стилей)
-- Используй локальное состояние в React с помощью хука useState для хранения и управления данными о мероприятиях. Без использования внешнего сервера или базы данных.
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-### Backend
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-- Не требуется внешнего бэкэнда, все данные хранятся и обрабатываются в локальном состоянии на стороне клиента.
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
----
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 
-## Функционал
-
-Реализуй компонент:
-
-1. **Форма добавления мероприятия**:
-   - Поля: название, дата.
-   - Кнопка "Добавить".
-   - Кнопка "Редактировать".
-2. **Список мероприятий**:
-   - Отображение мероприятий.
-   - Возможность удалить мероприятие (кнопка "Удалить").
-   - Возможность редактировать мероприятие (кнопка "Редактировать")
-
-### Требования к функционалу
-
-- После добавления, мероприятие появляется в списке.
-- После редактирования, мероприятие изменяет контент внутри себя и остается на прежней позиции в списке.
-- После удаления, мероприятие исчезает из списка.
-
----
-
-## Оценка эквивалентности
-
-- Работа с формой и состоянием.
-- Отображение данных в списке.
-- Простая логика редактирования.
-- Простая логика удаления.
-
-## Структура проекта
-```
-project-template/
-├── public/
-│   ├── index.html
-├── src/
-│   ├── components/
-│   │   ├── EventForm.tsx       # Компонент формы для добавления и редактирования мероприятий
-│   │   ├── EventList.tsx       # Компонент для отображения списка мероприятий
-│   ├── App.tsx                 # Главный компонент, который будет управлять состоянием всех мероприятий
-│   ├── index.tsx
-│   ├── styles.css
-├── .gitignore
-├── package.json
-├── README.md
 ```
 
-# Правила сдачи работы
+You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
 
-## 1. Форкни репозиторий
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-- В правом верхнем углу страницы нажми на кнопку **Fork**. Это создаст копию репозитория в твоем аккаунте на GitHub.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 
-## 2. Клонируй форк на свою машину
-
-- После того как форк будет создан, перейди в свой форк на GitHub.
-- Нажми на кнопку **Code** и скопируй URL для клонирования репозитория.
-- Клонируй репозиторий на свою локальную машину.
-
-## 3. Создай новую ветку
-
-- Перейди в директорию с репозиторием на своей машине.
-- Создай новую ветку для своей работы. Это поможет тебе избежать работы в основной ветке.
-
-## 4. Внеси изменения в код
-
-- Открой проект в своем редакторе и внеси необходимые изменения (реализуй функционал).
-
-## 5. Добавь изменения в индекс и сделай коммит
-
-- После внесения изменений добавь их в индекс и сделай коммит с описанием изменений.
-
-## 6. Запушь изменения в свой форк на GitHub
-
-- Отправь свою ветку с изменениями в твой форк на GitHub.
-
-## 7. Создай Pull Request (PR) в этот репозиторий
-
-- Перейди в свой форк на GitHub и ты увидишь уведомление о том, что ветка была запушена с кнопкой **Compare & Pull Request**.
-- Нажми на **Compare & Pull Request**.
-- В открывшемся окне убедись, что выбран правильный репозиторий для слияния (мой репозиторий) и выбрана правильная ветка (`develop_st1`).
-- Добавь описание изменений, которые ты внес, чтобы я мог понять, что было сделано.
-- Нажми кнопку **Create Pull Request**.
-
-## 8. Ожидай проверки и слияния PR
-
-- После создания PR я получу уведомление и смогу проверить твои изменения.
-- Если все будет в порядке, я смогу смержить твои изменения в основной репозиторий. Если будут замечания, я оставлю комментарии для исправлений.
+```
