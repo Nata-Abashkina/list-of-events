@@ -1,0 +1,28 @@
+:root {
+  --bg-color: #FAF9F6;
+  --title-color: #3B221E;
+
+  --btn-text-color: #3B221E;
+  --btn-bg-hover: #F5F4F0;
+  --btn-border: #4A2E2B;
+
+  --link-border: #3B221E;
+  --link-color: #3B221E;
+}
+
+$title-text: 'Tenor Sans', sans-serif;
+$subtitle-text: 'Lato', sans-serif;
+$main-text: 'Roboto', sans-serif;
+$num-text: 'Oswald', sans-serif;
+
+$header-block-size: clamp(6rem, 12vh, 12rem);
+$logo-size: clamp(10rem, 20vw, 22rem);
+$title-text-size: clamp(1.5rem, 3.2vw, 4.8rem);
+
+$btn-text-size: clamp(1rem, 1vw + 0.8rem, 1.4rem);
+
+$footer-block-size: clamp(4rem, 8vh, 6rem);
+$github-icon-size: clamp(3.5rem, 4vw + 1rem, 6rem);
+$footer-text-size: clamp(1.4rem, 3.5vw - 1rem, 4rem);
+
+$main-size: calc(99vh - (#{$header-block-size} + #{$footer-block-size}));

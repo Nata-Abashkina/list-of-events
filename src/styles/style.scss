@@ -1,0 +1,52 @@
+@use 'fonts';
+@use 'variables';
+@use 'theme-dark';
+@use 'header';
+@use 'main';
+@use 'footer';
+@use 'modal';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  overflow: hidden;
+  block-size: 100%;
+  inline-size: 100%;
+  font-family: variables.$main-text;
+  font-size: 62.5%;
+  background-color: var(--bg-color);
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.button {
+  padding: 1.5rem;
+  background-color: transparent;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: variables.$btn-text-size;
+  color: var(--btn-text-color);
+  border: 0.1rem solid var(--btn-border);
+    
+    &:hover {
+      background-color: var(--btn-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: 0.2rem solid var(--btn-border);
+      background-color: var(--btn-bg-hover);
+    }
+}

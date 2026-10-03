@@ -1,0 +1,15 @@
+@use 'variables';
+
+.main {
+  display: flex;
+  block-size: variables.$main-size;
+
+  &__events {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    inline-size: 50%;
+  }
+}
+
