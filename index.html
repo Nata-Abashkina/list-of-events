@@ -10,24 +10,134 @@
     <div id="root">
 
       <header class="header">
-        <img class="header__logo logo" src="/public/svg/logo.svg">
+        <img class="header__logo" src="/public/svg/logo.svg">
         <h1 class="header__title">Список мероприятий</h1>
-        <button class="button" type="button">Добавить</button>
+        <button class="header__button" type="button">Добавить</button>
+        <button class="header__button-theme active"><img class="header__theme" src="/public/svg/light.svg"></button>
       </header>
 
       <main class="main">
 
-        <section class="main__calendar"></section>
+        <section class="calendar">
+          <div class="calendar__month">
+          <h2 class="calendar__title">Октябрь</h2>
+          <div class="calendar__grid">
+            <p class="calendar__day-week">Mon</p>
+            <p class="calendar__day-week">Tue</p>
+            <p class="calendar__day-week">Wen</p>
+            <p class="calendar__day-week">Thu</p>
+            <p class="calendar__day-week">Fri</p>
+            <p class="calendar__day-week weekend">Sat</p>
+            <p class="calendar__day-week weekend">Sun</p>
+            <span class="calendar__day calendar__day--first">1</span>
+            <span class="calendar__day">2</span>
+            <span class="calendar__day">3</span>
+            <span class="calendar__day today selected">4</span>
+            <span class="calendar__day">5</span>
+            <span class="calendar__day">6</span>
+            <span class="calendar__day">7</span>
+            <span class="calendar__day">8</span>
+            <span class="calendar__day">9</span>
+            <span class="calendar__day">10</span>
+            <span class="calendar__day">11</span>
+            <span class="calendar__day">12</span>
+            <span class="calendar__day">13</span>
+            <span class="calendar__day">14</span>
+            <span class="calendar__day">15</span>
+            <span class="calendar__day">16</span>
+            <span class="calendar__day">17</span>
+            <span class="calendar__day">18</span>
+            <span class="calendar__day">19</span>
+            <span class="calendar__day">20</span>
+            <span class="calendar__day">21</span>
+            <span class="calendar__day">22</span>
+            <span class="calendar__day">23</span>
+            <span class="calendar__day">24</span>
+            <span class="calendar__day">25</span>
+            <span class="calendar__day">26</span>
+            <span class="calendar__day">27</span>
+            <span class="calendar__day">28</span>
+            <span class="calendar__day">29</span>
+            <span class="calendar__day">30</span>
+            <span class="calendar__day">31</span>
+          </div>
+          </div>
+          <div class="calendar__month innactive">
+          <h2 class="calendar__title">Ноябрь</h2>
+          <div class="calendar__grid">
+            <p class="calendar__day-week">Mon</p>
+            <p class="calendar__day-week">Tue</p>
+            <p class="calendar__day-week">Wen</p>
+            <p class="calendar__day-week">Thu</p>
+            <p class="calendar__day-week">Fri</p>
+            <p class="calendar__day-week weekend">Sat</p>
+            <p class="calendar__day-week weekend">Sun</p>
+            <span class="calendar__day calendar__day--first ">1</span>
+            <span class="calendar__day">2</span>
+            <span class="calendar__day">3</span>
+            <span class="calendar__day">4</span>
+            <span class="calendar__day">5</span>
+            <span class="calendar__day">6</span>
+            <span class="calendar__day">7</span>
+            <span class="calendar__day">8</span>
+            <span class="calendar__day">9</span>
+            <span class="calendar__day">10</span>
+            <span class="calendar__day">11</span>
+            <span class="calendar__day">12</span>
+            <span class="calendar__day">13</span>
+            <span class="calendar__day">14</span>
+            <span class="calendar__day">15</span>
+            <span class="calendar__day">16</span>
+            <span class="calendar__day">17</span>
+            <span class="calendar__day">18</span>
+            <span class="calendar__day">19</span>
+            <span class="calendar__day">20</span>
+            <span class="calendar__day">21</span>
+            <span class="calendar__day">22</span>
+            <span class="calendar__day">23</span>
+            <span class="calendar__day">24</span>
+            <span class="calendar__day">25</span>
+            <span class="calendar__day">26</span>
+            <span class="calendar__day">27</span>
+            <span class="calendar__day">28</span>
+            <span class="calendar__day">29</span>
+            <span class="calendar__day">30</span>
+          </div>
+          </div>
+        </section>
 
-        <section class="main__events">
+        <section class="events">
           <ul class="events__list">
             <li class="events__item">
-              <date class="events__date">04.10.2026</date>
-              <time class="events__time">14-00</time>
-              <p class="events__text">Поздравить папу с ДР</p>
+              <p class="events__info">
+                <time class="events__date" datetime="2026-10-04">04.10.2026</time>
+                <time class="events__time" datetime="14:00">14:00</time>
+                Поздравить папу с ДР
+              </p>
+              <div class="events__button">
+                <button class="events__button-edit" type="button">
+                  <img class="events__button-logo" src="/public/svg/edit.svg">
+                </button>
+                <button class="events__button-delete" type="button">
+                  <img class="events__button-logo" src="/public/svg/delete.svg">
+                </button>
+              </div>
+            </li>
+            <li class="events__item">
+              <p class="events__info">
+                <time class="events__date" datetime="2026-10-04">04.10.2026</time>
+                Поздравить папу с ДР
+              </p>
+              <div class="events__button">
+                <button class="events__button-edit" type="button">
+                  <img class="events__button-logo" src="/public/svg/edit.svg">
+                </button>
+                <button class="events__button-delete" type="button">
+                  <img class="events__button-logo" src="/public/svg/delete.svg">
+                </button>
+              </div>
             </li>
           </ul>
-          <button class="button" type="button">Добавить</button>
         </section>
 
       </main>
@@ -39,6 +149,244 @@
         </a>
       </footer>
     </div>
+
+    <dialog class="add modal" open>
+      <h3 class="modal__title">Добавить мероприятие</h3>
+      <form class="modal__form">
+        <div class="form__input">
+          <p class="input__title">Выберите день</p>
+          <input class="add__date" type="text" placeholder="ДД.ММ.ГГГГ" id="date-input" inputmode="numeric">
+          <div class="modal__calendar">
+            <div class="modal__navigation">
+              <button class="navigation__prev" type="button">
+                <img class="navigation__button" src="/svg/prev.svg" alt="">
+              </button>
+              <h3 class="navigation__title">Октябрь 2026</h3>
+              <button class="navigation__next" type="button">
+                <img class="navigation__button" src="/svg/next.svg" alt="">
+              </button>
+            </div>
+            <div class="calendar__grid">
+              <p class="calendar__day-week">Пн</p>
+              <p class="calendar__day-week">Вт</p>
+              <p class="calendar__day-week">Ср</p>
+              <p class="calendar__day-week">Чт</p>
+              <p class="calendar__day-week">Пт</p>
+              <p class="calendar__day-week weekend">Сб</p>
+              <p class="calendar__day-week weekend">Вс</p>
+              <span class="calendar__day calendar__day--first">1</span>
+              <span class="calendar__day">2</span>
+              <span class="calendar__day">3</span>
+              <span class="calendar__day today selected">4</span>
+              <span class="calendar__day">5</span>
+              <span class="calendar__day">6</span>
+              <span class="calendar__day">7</span>
+              <span class="calendar__day">8</span>
+              <span class="calendar__day">9</span>
+              <span class="calendar__day">10</span>
+              <span class="calendar__day">11</span>
+              <span class="calendar__day">12</span>
+              <span class="calendar__day">13</span>
+              <span class="calendar__day">14</span>
+              <span class="calendar__day">15</span>
+              <span class="calendar__day">16</span>
+              <span class="calendar__day">17</span>
+              <span class="calendar__day">18</span>
+              <span class="calendar__day">19</span>
+              <span class="calendar__day">20</span>
+              <span class="calendar__day">21</span>
+              <span class="calendar__day">22</span>
+              <span class="calendar__day">23</span>
+              <span class="calendar__day">24</span>
+              <span class="calendar__day">25</span>
+              <span class="calendar__day">26</span>
+              <span class="calendar__day">27</span>
+              <span class="calendar__day">28</span>
+              <span class="calendar__day">29</span>
+              <span class="calendar__day">30</span>
+              <span class="calendar__day">31</span>
+            </div>
+          </div>
+          <p class="modal__error hidden">Несуществующая дата</p>
+        </div>
+        <div class="form__input">
+          <p class="input__title">Выберите время</p>
+          <input class="add__time" type="text" placeholder="ЧЧ:ММ" id="time-input" inputmode="numeric">
+          <div class="add__time-list">
+            <div class="add__time-column add__time-column--hours">
+              <button class="add__time-item" type="button">00</button>
+              <button class="add__time-item" type="button">01</button>
+              <button class="add__time-item" type="button">02</button>
+              <button class="add__time-item" type="button">03</button>
+              <button class="add__time-item" type="button">04</button>
+              <button class="add__time-item" type="button">05</button>
+              <button class="add__time-item" type="button">06</button>
+              <button class="add__time-item" type="button">07</button>
+              <button class="add__time-item" type="button">08</button>
+              <button class="add__time-item" type="button">09</button>
+              <button class="add__time-item" type="button">10</button>
+              <button class="add__time-item" type="button">11</button>
+              <button class="add__time-item" type="button">12</button>
+              <button class="add__time-item" type="button">13</button>
+              <button class="add__time-item" type="button">14</button>
+              <button class="add__time-item" type="button">15</button>
+              <button class="add__time-item" type="button">16</button>
+              <button class="add__time-item" type="button">17</button>
+              <button class="add__time-item" type="button">18</button>
+              <button class="add__time-item" type="button">19</button>
+              <button class="add__time-item" type="button">20</button>
+              <button class="add__time-item" type="button">21</button>
+              <button class="add__time-item" type="button">22</button>
+              <button class="add__time-item" type="button">23</button>
+            </div>
+            <div class="add__time-column add__time-column--minutes">
+              <button class="add__time-item" type="button">00</button>
+              <button class="add__time-item" type="button">01</button>
+              <button class="add__time-item" type="button">02</button>
+              <button class="add__time-item" type="button">03</button>
+              <button class="add__time-item" type="button">04</button>
+              <button class="add__time-item" type="button">05</button>
+              <button class="add__time-item" type="button">06</button>
+              <button class="add__time-item" type="button">07</button>
+              <button class="add__time-item" type="button">08</button>
+              <button class="add__time-item" type="button">09</button>
+              <button class="add__time-item" type="button">10</button>
+              <button class="add__time-item" type="button">11</button>
+              <button class="add__time-item" type="button">12</button>
+              <button class="add__time-item" type="button">13</button>
+              <button class="add__time-item" type="button">14</button>
+              <button class="add__time-item" type="button">15</button>
+              <button class="add__time-item" type="button">16</button>
+              <button class="add__time-item" type="button">17</button>
+              <button class="add__time-item" type="button">18</button>
+              <button class="add__time-item" type="button">19</button>
+              <button class="add__time-item" type="button">20</button>
+              <button class="add__time-item" type="button">21</button>
+              <button class="add__time-item" type="button">22</button>
+              <button class="add__time-item" type="button">23</button>
+              <button class="add__time-item" type="button">24</button>
+              <button class="add__time-item" type="button">25</button>
+              <button class="add__time-item" type="button">26</button>
+              <button class="add__time-item" type="button">27</button>
+              <button class="add__time-item" type="button">28</button>
+              <button class="add__time-item" type="button">29</button>
+              <button class="add__time-item" type="button">30</button>
+              <button class="add__time-item" type="button">31</button>
+              <button class="add__time-item" type="button">32</button>
+              <button class="add__time-item" type="button">33</button>
+              <button class="add__time-item" type="button">34</button>
+              <button class="add__time-item" type="button">35</button>
+              <button class="add__time-item" type="button">36</button>
+              <button class="add__time-item" type="button">37</button>
+              <button class="add__time-item" type="button">38</button>
+              <button class="add__time-item" type="button">39</button>
+              <button class="add__time-item" type="button">40</button>
+              <button class="add__time-item" type="button">41</button>
+              <button class="add__time-item" type="button">42</button>
+              <button class="add__time-item" type="button">43</button>
+              <button class="add__time-item" type="button">44</button>
+              <button class="add__time-item" type="button">45</button>
+              <button class="add__time-item" type="button">46</button>
+              <button class="add__time-item" type="button">47</button>
+              <button class="add__time-item" type="button">48</button>
+              <button class="add__time-item" type="button">49</button>
+              <button class="add__time-item" type="button">50</button>
+              <button class="add__time-item" type="button">51</button>
+              <button class="add__time-item" type="button">52</button>
+              <button class="add__time-item" type="button">53</button>
+              <button class="add__time-item" type="button">54</button>
+              <button class="add__time-item" type="button">55</button>
+              <button class="add__time-item" type="button">56</button>
+              <button class="add__time-item" type="button">57</button>
+              <button class="add__time-item" type="button">58</button>
+              <button class="add__time-item" type="button">59</button>
+            </div>
+          </div>
+          <p class="modal__error" hidden>Несуществующее время</p>
+        </div>
+        <div class="form__input">
+          <p class="input__title">Название</p>
+          <input class="add__text" type="text" placeholder="Название">
+          <p class="modal__error" hidden>Поле не может быть пустым</p>
+        </div>
+        <div class="modal__buttons">
+          <button class="modal__button cancel" type="button">Отменить</button>
+          <button class="modal__button save" type="button">Сохранить</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!--<dialog class="add modal" open>
+      <h3 class="modal__title">Добавить мероприятие</h3>
+      <form class="modal__form">
+        <label class="form__input">
+        <p class="input__title">Выберите день</p>
+        <input class="add__date" type="text" placeholder="ДД.ММ.ГГГГ" id="date-input">
+        <div class="modal__calendar">
+          <div class="modal__navigation">
+            <button class="navigation__prev" type="button"><img class="navigation__button" src="/public/svg/prev.svg"></button>
+            <h3 class="navigation__title">Октябрь 2026</h3>
+            <button class="navigation__next" type="button"><img class="navigation__button" src="/public/svg/next.svg"></button>
+          </div>
+          <div class="calendar__grid">
+            <p class="calendar__day-week">Mon</p>
+            <p class="calendar__day-week">Tue</p>
+            <p class="calendar__day-week">Wen</p>
+            <p class="calendar__day-week">Thu</p>
+            <p class="calendar__day-week">Fri</p>
+            <p class="calendar__day-week weekend">Sat</p>
+            <p class="calendar__day-week weekend">Sun</p>
+            <span class="calendar__day calendar__day--first">1</span>
+            <span class="calendar__day">2</span>
+            <span class="calendar__day">3</span>
+            <span class="calendar__day today selected">4</span>
+            <span class="calendar__day">5</span>
+            <span class="calendar__day">6</span>
+            <span class="calendar__day">7</span>
+            <span class="calendar__day">8</span>
+            <span class="calendar__day">9</span>
+            <span class="calendar__day">10</span>
+            <span class="calendar__day">11</span>
+            <span class="calendar__day">12</span>
+            <span class="calendar__day">13</span>
+            <span class="calendar__day">14</span>
+            <span class="calendar__day">15</span>
+            <span class="calendar__day">16</span>
+            <span class="calendar__day">17</span>
+            <span class="calendar__day">18</span>
+            <span class="calendar__day">19</span>
+            <span class="calendar__day">20</span>
+            <span class="calendar__day">21</span>
+            <span class="calendar__day">22</span>
+            <span class="calendar__day">23</span>
+            <span class="calendar__day">24</span>
+            <span class="calendar__day">25</span>
+            <span class="calendar__day">26</span>
+            <span class="calendar__day">27</span>
+            <span class="calendar__day">28</span>
+            <span class="calendar__day">29</span>
+            <span class="calendar__day">30</span>
+            <span class="calendar__day">31</span>
+          </div>
+        </div>
+        </label>
+        <label class="form__input">
+          <p class="input__title">Выберите время</p>
+          <input class="add__time" type="time">
+        </label>
+        <label class="form__input">
+          <p class="input__title">Укажите название</p>
+          <input class="add__text" type="text">
+        </label>
+        <div class="modal__buttons">
+          <button class="modal__button cancel" type="button">Отменить</button>
+          <button class="modal__button save" type="button">Сохранить</button>
+        </div>
+      </form>
+    </dialog>-->
+    
+    
+
     <!--<script type="module" src="/src/main.tsx"></script>-->
   </body>
 </html>

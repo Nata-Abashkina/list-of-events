@@ -1,0 +1,63 @@
+@use 'variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  overflow: hidden;
+  block-size: 100%;
+  inline-size: 100%;
+  font-family: variables.$main-text;
+  font-size: 62.5%;
+  background-color: var(--bg-color);
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  all: unset;
+  padding: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  transition: background-color 0.2s ease;
+  font-size: variables.$btn-text-size;
+  color: var(--btn-text-color);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--btn-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 0.2rem solid var(--btn-border);
+    background-color: var(--btn-bg-hover);
+  }
+}
+
+input {
+  appearance: none;
+  -webkit-appearance: none;
+  block-size: 2.2rem;
+  inline-size: 10rem;
+  padding: 0.3rem;
+  background-color: var(--input-bg);
+  border: 0.1rem solid var(--input-border);
+
+  &:hover {
+    background-color: var(--input-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 0.2rem solid var(--input-border);
+    background-color: var(--input-bg-hover);
+  }
+}

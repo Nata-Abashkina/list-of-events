@@ -1,13 +1,36 @@
 :root {
   --bg-color: #FAF9F6;
   --title-color: #3B221E;
+  --subtitle-color: #3B221E;
+  --text-color: #3B221E;
+  --calendar-day-color: #3B221E;
 
   --btn-text-color: #3B221E;
   --btn-bg-hover: #F5F4F0;
-  --btn-border: #4A2E2B;
+  --btn-border: #3B221E;
 
   --link-border: #3B221E;
   --link-color: #3B221E;
+
+  --weekend-color: #8E8A85;
+  --today-bg: #E6D7E3;
+  --day-bg-hover: #F5F4F0;
+  --selected-border: #3B221E;
+  --calendar-border: #3B221E;
+
+  --logo-btn-border: #3B221E;
+
+  --scrollbar-color: #3B221E;
+
+  --modal-bg: #FAF9F6;
+  --modal-border: #3B221E;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --modal-title-color: #3B221E;
+
+  --input-border: #3B221E;
+  --input-text-color: #3B221E;
+  --input-bg: #FAF9F6;
+  --input-bg-hover: #F5F4F0;
 }
 
 $title-text: 'Tenor Sans', sans-serif;

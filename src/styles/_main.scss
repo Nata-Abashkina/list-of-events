@@ -3,13 +3,117 @@
 .main {
   display: flex;
   block-size: variables.$main-size;
-
-  &__events {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 2rem;
-    inline-size: 50%;
-  }
 }
 
+.calendar, .events {
+  inline-size: 50%;
+  overflow-block: auto;
+  overflow-inline: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color);
+}
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+
+    &__title {
+      font-family: variables.$subtitle-text;
+      font-size: 3.5rem;
+      letter-spacing: 0.5rem;
+      color: var(--subtitle-color);
+    }
+
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0;
+      border: 0.1rem solid var(--calendar-border);
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+
+    &__day-week, &__day {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-inline-end: 0.1rem solid var(--calendar-border);
+      border-block-end: 0.1rem solid var(--calendar-border);
+    }
+
+    &__day-week {
+      font-size: 2.5rem;
+    }
+
+    &__day {
+      font-family: variables.$num-text;
+      font-size: 2.5rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--day-bg-hover);
+      }
+    }
+}
+
+.weekend {
+  background-color: var(--weekend-color);
+}
+
+.innactive {
+  opacity: 0.5;
+}
+
+.today {
+  background-color: var(--today-bg);
+}
+
+.selected {
+  outline: 0.3rem solid var(--selected-border);
+  outline-offset: -0.3rem;  
+}
+
+.events {
+    display: flex;
+    flex-direction: column;
+    padding: 6rem 2rem;
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    &__item {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    &__info {
+      font-size: 1.8rem;
+      color: var(--text-color);
+    }
+
+    &__button {
+      display: flex;
+      gap: 1rem;
+    }
+
+    &__button-logo {
+      inline-size: 1.8rem;
+    }
+}
+
+@media (max-width: 767px) {
+  .main {
+    flex-direction: column;
+  }
+
+  .calendar,
+  .events {
+    inline-size: 100%;
+  }
+}
