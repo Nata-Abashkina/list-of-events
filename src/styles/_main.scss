@@ -46,11 +46,13 @@
 
     &__day-week {
       font-size: 2.5rem;
+      color: var(--text-color);
     }
 
     &__day {
       font-family: variables.$num-text;
       font-size: 2.5rem;
+      color: var(--text-color);
       cursor: pointer;
 
       &:hover {
@@ -79,17 +81,17 @@
 .events {
     display: flex;
     flex-direction: column;
-    padding: 6rem 2rem;
+    padding: 4rem 2rem;
 
     &__list {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
     }
 
     &__item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     
     &__info {

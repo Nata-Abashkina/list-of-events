@@ -1,0 +1,51 @@
+@use 'variables';
+
+.undo {
+  position: fixed;
+  inset-block-end: 2rem;
+  inset-inline-end: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  inline-size: 90%;
+  max-inline-size: 28rem;
+  padding: 1.5rem;
+  border: 0.1rem solid var(--modal-border);
+  border-radius: 1rem;
+  background-color: var(--modal-bg);
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__text {
+    font-family: variables.$main-text;
+    font-size: 1.6rem;
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  &__timer {
+    inline-size: 100%;
+    block-size: 0.3rem;
+    background-color: var(--timer-color);
+    overflow: hidden;
+  }
+
+  &__timer-bar {
+    block-size: 100%;
+    inline-size: 100%;
+    background-color: var(--timer-color);
+    animation: undo-countdown 5s linear forwards;
+  }
+
+  &__btn {
+    border: 0.1rem solid var(--btn-border);
+    align-self: center;
+  }
+}
+
+@keyframes undo-countdown {
+  from { inline-size: 100%; }
+  to   { inline-size: 0%; }
+}

@@ -43,7 +43,7 @@
     flex: 0 0 100%;
     margin-left: 14rem;
     font-size: 1.4rem;
-    color: variables.$main-text;
+    color: var(--text-color);
   }
 
   &__calendar {
@@ -100,6 +100,7 @@
     font-family: variables.$main-text;
     font-size: 2rem;
     flex: 0 0 16rem;
+    color: var(--text-color);
   }
 }
 
@@ -115,6 +116,44 @@
 }
 
 .add {
+  &__allday {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &-input {
+      position: absolute; 
+      opacity: 0;
+      inline-size: 2rem;
+      block-size: 2rem;
+    }
+
+    &-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      inline-size: 2rem;
+      block-size: 2rem;
+      border: 0.1rem solid var(--input-border);
+      border-radius: 0.4rem;
+      background-color: var(--input-bg);
+    }
+    
+    &-icon {
+      inline-size: 2.7rem;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    &-text {
+      font-size: 1.5rem;
+      color: var(--text-color);
+    }
+
+    &-input:checked + &-box &-icon {
+      opacity: 1;
+    }
+  }
 
   &__time-list {
     display: none;
@@ -142,6 +181,10 @@
     scrollbar-width: none;
     scrollbar-color: var(--scrollbar-color);
     font-size: 2rem;
+  }
+
+  &__time-item {
+    color: var(--text-color);
   }
 }
 

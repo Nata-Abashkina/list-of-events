@@ -1,7 +1,35 @@
 [data-theme="dark"] {
-  --bg-color: #3B221E;        // Кофейный фон
-  --title-color: #FAF9F6;     // Нюдовый текст
+  --bg-color: #3B221E;
+  --title-color: #FAF9F6;
+  --subtitle-color: #FAF9F6;
+  --text-color: #FAF9F6;
+  --calendar-day-color: #FAF9F6;
+
+  --btn-text-color: #FAF9F6;
+  --btn-bg-hover: #4A2C27;
+  --btn-border: #FAF9F6;
+
+  --link-border: #FAF9F6;
+  --link-color: #FAF9F6;
   
-  --weekend-color: #A39E98;   // Серый чуть светлее/ярче, чтобы читался
-  --today-bg: #F0DDF0;        // Лаванда капельку сочнее, чтобы мягко светилась
+  --weekend-color: #A39E98;
+  --today-bg: #5A3A5E;
+  --day-bg-hover: #4A2C27;
+  --selected-border: #FAF9F6;
+  --calendar-border: #FAF9F6;
+
+  --logo-btn-border: #FAF9F6;
+
+  --scrollbar-color: #FAF9F6;
+
+  --modal-bg: #3B221E;
+  --modal-border: #FAF9F6;
+  --modal-title-color: #FAF9F6;
+
+  --input-border: #FAF9F6;
+  --input-text-color: #FAF9F6;
+  --input-bg: #3B221E;
+  --input-bg-hover: #4A2C27;
+
+  --timer-color: #FAF9F6;
 }
