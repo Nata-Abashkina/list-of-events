@@ -14,51 +14,58 @@
 }
 
 .calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+
+  &__title {
+    font-family: variables.$subtitle-text;
+    font-size: 3.5rem;
+    letter-spacing: 0.5rem;
+    color: var(--subtitle-color);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    border: 0.1rem solid var(--calendar-border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+
+  &__day-week, &__day {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-inline-end: 0.1rem solid var(--calendar-border);
+    border-block-end: 0.1rem solid var(--calendar-border);
+  }
 
-    &__title {
-      font-family: variables.$subtitle-text;
-      font-size: 3.5rem;
-      letter-spacing: 0.5rem;
-      color: var(--subtitle-color);
+  &__day-week {
+    font-size: 2.5rem;
+    color: var(--text-color);
+  }
+
+  &__day {
+    font-family: variables.$num-text;
+    font-size: 2.5rem;
+    color: var(--text-color);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--day-bg-hover);
     }
+  }
 
-    &__grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0;
-      border: 0.1rem solid var(--calendar-border);
-      border-radius: 1.5rem;
-      overflow: hidden;
-    }
-
-    &__day-week, &__day {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-inline-end: 0.1rem solid var(--calendar-border);
-      border-block-end: 0.1rem solid var(--calendar-border);
-    }
-
-    &__day-week {
-      font-size: 2.5rem;
-      color: var(--text-color);
-    }
-
-    &__day {
-      font-family: variables.$num-text;
-      font-size: 2.5rem;
-      color: var(--text-color);
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--day-bg-hover);
-      }
-    }
+  &__sentinel {
+    flex: 0 0 1px;
+    inline-size: 100%;
+    opacity: 0;
+    pointer-events: none;
+    margin-block: -0.75rem;
+  }
 }
 
 .weekend {
