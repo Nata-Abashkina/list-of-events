@@ -3,6 +3,7 @@
 .main {
   display: flex;
   block-size: variables.$main-size;
+  padding: 2rem 0;
 }
 
 .calendar, .events {
@@ -102,6 +103,8 @@
     }
     
     &__info {
+      display: flex;
+      gap: 0.7rem;
       font-size: 1.8rem;
       color: var(--text-color);
     }
