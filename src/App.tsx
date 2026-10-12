@@ -1,26 +1,55 @@
-import { useState } from 'react';
+// App.tsx
+import { useState, useCallback } from 'react';
 import { todayISO } from './core/dateUtils';
+import { removeEvent } from './core/eventStore';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Calendar } from './components/Calendar';
+import { EventList } from './components/EventList';
+import { Undo } from './components/Undo';
 
 export function App() {
   const [version, setVersion] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string>(todayISO());
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
-  const refresh = () => setVersion((v) => v + 1);
+  const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
-  void version;
-  void refresh;
+  const handleDelete = (id: string) => {
+    if (pendingDelete && pendingDelete !== id) {
+      removeEvent(pendingDelete);
+    }
+    setPendingDelete(id);
+  };
+
+  const handleUndo = () => {
+    setPendingDelete(null);
+  };
+
+  const handleExpire = () => {
+    if (pendingDelete) {
+      removeEvent(pendingDelete);
+      setPendingDelete(null);
+      refresh();
+    }
+  };
 
   return (
     <>
       <Header onAddClick={() => {}} onThemeToggle={() => {}} />
       <main className="main">
         <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-        <section className="events" />
+        <EventList
+          selectedDate={selectedDate}
+          version={version}
+          pendingDelete={pendingDelete}
+          onDelete={handleDelete}
+        />
       </main>
       <Footer />
+      {pendingDelete && (
+        <Undo key={pendingDelete} onUndo={handleUndo} onExpire={handleExpire} />
+      )}
     </>
   );
 }
