@@ -35,7 +35,7 @@
   &__timer-bar {
     block-size: 100%;
     inline-size: 100%;
-    background-color: var(--timer-color);
+    background-color: var(--timer-bar-color);
     animation: undo-countdown 5s linear forwards;
   }
 
@@ -46,6 +46,6 @@
 }
 
 @keyframes undo-countdown {
-  from { inline-size: 100%; }
-  to   { inline-size: 0%; }
+  from { inline-size: 0%; }
+  to   { inline-size: 100%; }
 }

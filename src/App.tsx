@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { todayISO } from './core/dateUtils';
 import { removeEvent, addEvent, updateEvent, getEvents } from './core/eventStore';
+import { resolveInitialTheme, saveTheme, applyTheme } from './core/theme';
+import type { Theme } from './core/types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Calendar } from './components/Calendar';
@@ -14,8 +16,16 @@ export function App() {
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [theme, setTheme] = useState<Theme>(() => resolveInitialTheme());
 
   const refresh = useCallback(() => setVersion((v) => v + 1), []);
+
+  const handleThemeToggle = () => {
+    const next: Theme = theme === 'light' ? 'dark' : 'light';
+    saveTheme(next);
+    applyTheme(document.documentElement, next);
+    setTheme(next);
+  };
 
   const handleDelete = (id: string) => {
     if (pendingDelete && pendingDelete !== id) {
@@ -68,7 +78,11 @@ export function App() {
 
   return (
     <>
-      <Header onAddClick={handleAddClick} onThemeToggle={() => {}} />
+      <Header
+        onAddClick={handleAddClick}
+        onThemeToggle={handleThemeToggle}
+        theme={theme}
+      />
       <main className="main">
         <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
         <EventList
@@ -80,9 +94,12 @@ export function App() {
         />
       </main>
       <Footer />
-      {pendingDelete && (
-        <Undo key={pendingDelete} onUndo={handleUndo} onExpire={handleExpire} />
-      )}
+      <Undo
+        hidden={!pendingDelete}
+        pendingId={pendingDelete}
+        onUndo={handleUndo}
+        onExpire={handleExpire}
+      />
       {isModalOpen && (
         <EventForm
           editingEvent={editingEvent}
