@@ -102,15 +102,12 @@ function emptyCell(): CalendarCell {
 }
 
 export function buildMonthConfig(y: number, m: number): MonthConfig {
-  const now = new Date();
-  const isCurrent = now.getFullYear() === y && now.getMonth() === m;
   const label = m === 0 ? `${MONTH_LABELS[m]} ${y}` : MONTH_LABELS[m];
   return {
     year: y,
     month: m,
     label,
     matrix: buildMonthMatrix(y, m),
-    isCurrent,
     isYearStart: m === 0,
   };
 }

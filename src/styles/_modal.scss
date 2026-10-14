@@ -6,7 +6,7 @@
   inset: 0;
   margin: auto;
   inline-size: 30%;
-  block-size: 50%;
+  block-size: 55%;
   overflow-inline: hidden;
 
     &[open] {
@@ -50,7 +50,7 @@
   &__calendar {
     display: none;
     position: absolute;
-    top: 100%;
+    top: 140%;
     left: 50%;
     transform: translateX(-50%);
     block-size: auto;

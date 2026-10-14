@@ -25,30 +25,39 @@ function shiftMonth(year: number, month: number, delta: number) {
 }
 
 function monthKey(year: number, month: number) {
-  return `${year}-${month}`;
+  return `${year}-${String(month).padStart(2, '0')}`;
 }
 
 export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const topSentinelRef = useRef<HTMLDivElement | null>(null);
   const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
-  const initialNowRef = useRef(new Date());
   const anchorRef = useRef<Anchor | null>(null);
 
+  const [initialNow] = useState(() => new Date());
+
   const [months, setMonths] = useState<MonthConfig[]>(() => {
-    const now = initialNowRef.current;
     const list: MonthConfig[] = [];
     for (let i = -INITIAL_BACK; i <= INITIAL_FORWARD; i++) {
-      const { year, month } = shiftMonth(now.getFullYear(), now.getMonth(), i);
+      const { year, month } = shiftMonth(
+        initialNow.getFullYear(),
+        initialNow.getMonth(),
+        i,
+      );
       list.push(buildMonthConfig(year, month));
     }
     return list;
   });
 
-  const isCurrentMonth = useCallback((config: MonthConfig) => {
-    const now = initialNowRef.current;
-    return config.year === now.getFullYear() && config.month === now.getMonth();
-  }, []);
+  const isCurrentMonth = useCallback(
+    (config: MonthConfig) => {
+      return (
+        config.year === initialNow.getFullYear() &&
+        config.month === initialNow.getMonth()
+      );
+    },
+    [initialNow],
+  );
 
   const captureAnchor = useCallback(() => {
     if (anchorRef.current) return;
@@ -79,7 +88,9 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
         older.push(buildMonthConfig(year, month));
       }
       const oldest = older[0];
-      const exists = prev.some((m) => m.year === oldest.year && m.month === oldest.month);
+      const exists = prev.some(
+        (m) => m.year === oldest.year && m.month === oldest.month,
+      );
       if (exists) return prev;
       return [...older, ...prev];
     });
@@ -94,7 +105,9 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
         newer.push(buildMonthConfig(year, month));
       }
       const newest = newer[newer.length - 1];
-      const exists = prev.some((m) => m.year === newest.year && m.month === newest.month);
+      const exists = prev.some(
+        (m) => m.year === newest.year && m.month === newest.month,
+      );
       if (exists) return prev;
       return [...prev, ...newer];
     });
@@ -105,7 +118,9 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
     const container = containerRef.current;
     if (!anchor || !container) return;
 
-    const el = container.querySelector<HTMLElement>(`[data-month="${anchor.key}"]`);
+    const el = container.querySelector<HTMLElement>(
+      `[data-month="${anchor.key}"]`,
+    );
     if (el) {
       const containerRect = container.getBoundingClientRect();
       const elRect = el.getBoundingClientRect();
@@ -117,7 +132,9 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const target = container.querySelector<HTMLElement>('.calendar__month:not(.innactive)');
+    const target = container.querySelector<HTMLElement>(
+      '.calendar__month:not(.innactive)',
+    );
     if (!target) return;
     const containerRect = container.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
@@ -148,12 +165,18 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
 
   return (
     <section className="calendar" ref={containerRef}>
-      <div ref={topSentinelRef} aria-hidden="true" className="calendar__sentinel" />
+      <div
+        ref={topSentinelRef}
+        aria-hidden="true"
+        className="calendar__sentinel"
+      />
       {months.map((config) => (
         <div
           key={monthKey(config.year, config.month)}
           data-month={monthKey(config.year, config.month)}
-          className={isCurrentMonth(config) ? 'calendar__month' : 'calendar__month innactive'}
+          className={
+            isCurrentMonth(config) ? 'calendar__month' : 'calendar__month innactive'
+          }
         >
           <h2 className="calendar__title">{config.label}</h2>
           <MonthGrid
@@ -163,7 +186,11 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
           />
         </div>
       ))}
-      <div ref={bottomSentinelRef} aria-hidden="true" className="calendar__sentinel" />
+      <div
+        ref={bottomSentinelRef}
+        aria-hidden="true"
+        className="calendar__sentinel"
+      />
     </section>
   );
 }

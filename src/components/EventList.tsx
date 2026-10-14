@@ -14,7 +14,7 @@ function formatDisplayDate(iso: string): string {
 }
 
 export function EventList({ selectedDate, version, pendingDelete, onDelete, onEdit }: EventListProps) {
-  void version;
+  void version; // триггер перерисовки, читается React'ом через ре-рендер
   const events = getEventsByDate(selectedDate);
   const today = todayISO();
 

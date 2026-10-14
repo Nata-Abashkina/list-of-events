@@ -17,15 +17,18 @@ interface TimePickerProps {
 export function TimePicker({ value, onChange, disabled }: TimePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputText, setInputText] = useState(value);
+  const [lastValue, setLastValue] = useState(value);
   const rootRef = useRef<HTMLDivElement>(null);
   const hoursRef = useRef<HTMLDivElement>(null);
   const minutesRef = useRef<HTMLDivElement>(null);
 
   const [h, m] = value ? value.split(':') : ['', ''];
 
-  useEffect(() => {
+  // Синхронизация с внешним value через "adjusting state during render".
+  if (value !== lastValue) {
+    setLastValue(value);
     setInputText(value);
-  }, [value]);
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -44,7 +47,8 @@ export function TimePicker({ value, onChange, disabled }: TimePickerProps) {
       if (!el) return;
       const item = el.children[idx + total] as HTMLElement | undefined;
       if (item) {
-        el.scrollTop = item.offsetTop - el.clientHeight / 2 + item.clientHeight / 2;
+        el.scrollTop =
+          item.offsetTop - el.clientHeight / 2 + item.clientHeight / 2;
       }
     };
     center(hoursRef.current, h ? Number(h) : 0, HOURS.length);

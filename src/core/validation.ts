@@ -1,4 +1,4 @@
-import type { Event, ValidationResult, EventFormMode } from './types';
+import type { ValidationResult } from './types';
 import { compareISO, timeToMinutes, todayISO, fromISODate, toISODate } from './dateUtils';
 
 const ok: ValidationResult = { valid: true };
@@ -59,22 +59,6 @@ export function validateTime(
   if (timeToMinutes(time) < nowMinutes) {
     return fail('Время не может быть в прошлом');
   }
-
-  return ok;
-}
-
-export function validateEvent(
-  input: Pick<Event, 'title' | 'date' | 'time'>,
-  _mode: EventFormMode,
-): ValidationResult {
-  const t = validateTitle(input.title);
-  if (!t.valid) return t;
-
-  const d = validateDate(input.date);
-  if (!d.valid) return d;
-
-  const tm = validateTime(input.time, input.date, input.time === undefined);
-  if (!tm.valid) return tm;
 
   return ok;
 }

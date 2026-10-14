@@ -27,7 +27,6 @@ export interface MonthConfig {
   month: number;
   label: string;
   matrix: CalendarCell[];
-  isCurrent: boolean;
   isYearStart: boolean;   // год в label только у января
 }
 
@@ -36,7 +35,3 @@ export type Theme = 'light' | 'dark';
 export type ValidationResult =
   | { valid: true }
   | { valid: false; error: string };
-
-export type EventFormMode =
-  | { mode: 'add'; initialDate?: string }
-  | { mode: 'edit'; event: Event };

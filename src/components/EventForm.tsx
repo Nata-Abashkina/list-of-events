@@ -27,7 +27,6 @@ function displayToISO(display: string): string {
 
 export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: EventFormProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const dateInputRef = useRef<HTMLInputElement>(null);
   const dateWrapRef = useRef<HTMLDivElement>(null);
 
   const [dateDisplay, setDateDisplay] = useState<string>(
@@ -112,7 +111,6 @@ export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: Eve
         <div className="form__input" ref={dateWrapRef}>
           <p className="input__title">Выберите день</p>
           <input
-            ref={dateInputRef}
             className="add__date"
             type="text"
             placeholder="ДД.ММ.ГГГГ"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { MonthConfig } from '../core/types';
 import { buildMonthConfig, fromISODate, todayISO } from '../core/dateUtils';
 import { MonthGrid } from './MonthGrid';
@@ -24,14 +24,20 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
   const [viewYear, setViewYear] = useState(initial.getFullYear());
   const [viewMonth, setViewMonth] = useState(initial.getMonth());
   const [mode, setMode] = useState<Mode>('days');
+  const [lastValue, setLastValue] = useState(value);
 
-  useEffect(() => {
-    if (!value) return;
-    const d = fromISODate(value);
-    if (Number.isNaN(d.getTime())) return;
-    setViewYear(d.getFullYear());
-    setViewMonth(d.getMonth());
-  }, [value]);
+  // Синхронизация с внешним value через "adjusting state during render".
+  // Официальный паттерн React вместо useEffect + setState.
+  if (value !== lastValue) {
+    setLastValue(value);
+    if (value) {
+      const d = fromISODate(value);
+      if (!Number.isNaN(d.getTime())) {
+        setViewYear(d.getFullYear());
+        setViewMonth(d.getMonth());
+      }
+    }
+  }
 
   const minDate = min ?? todayISO();
 
@@ -101,11 +107,19 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
         <button className="navigation__prev" type="button" onClick={goPrev}>
           <img className="navigation__button" src="/svg/prev.svg" alt="Назад" />
         </button>
-        <button className="navigation__title" type="button" onClick={onTitleClick}>
+        <button
+          className="navigation__title"
+          type="button"
+          onClick={onTitleClick}
+        >
           {title}
         </button>
         <button className="navigation__next" type="button" onClick={goNext}>
-          <img className="navigation__button" src="/svg/next.svg" alt="Вперёд" />
+          <img
+            className="navigation__button"
+            src="/svg/next.svg"
+            alt="Вперёд"
+          />
         </button>
       </div>
 
