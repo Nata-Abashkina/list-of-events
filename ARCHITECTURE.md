@@ -61,7 +61,7 @@ interface Event {
 **Соглашение по времени:**
 - `time === undefined` — пользователь **явно** поставил чекбокс «Весь день»
 - `time === 'HH:mm'` — время указано
-- Пустое время без чекбокса **не сохраняется** — валидация отбривает
+- Пустое время без чекбокса **не сохраняется** — валидация отклоняет
 
 ### `dateUtils.ts` — календарное ядро
 
@@ -285,7 +285,6 @@ interface TimePickerProps {
 - `handleThemeToggle`: вычисляет `next` (light ↔ dark), вызывает `saveTheme(next)`, `applyTheme(document.documentElement, next)`, `setTheme(next)`
 - Побочные эффекты — вне updater-а `setTheme`, чисто и идемпотентно
 - Header получает проп `theme` и показывает иконку: `/svg/light.svg` при light, `/svg/dark.svg` при dark
-- Класс `active` не используется
 - `main.tsx` применяет тему до `createRoot`, чтобы не было вспышки
 
 ### Механика удаления с Undo
@@ -393,7 +392,7 @@ src/
 - Состояние `theme` — в App, ленивая инициализация `resolveInitialTheme()`
 - `main.tsx` применяет тему до `createRoot`, чтобы не было вспышки
 - `handleThemeToggle`: `saveTheme` + `applyTheme(document.documentElement)` + `setTheme`. Побочные эффекты вне updater-а — чисто, идемпотентно
-- Иконка кнопки — по теме: `light.svg` / `dark.svg`. Класс `active` не используется
+- Иконка кнопки — по теме: `light.svg` / `dark.svg`.
 - Ключ `list-of-events:theme`. Значения `'light' | 'dark'`
 
 ### Undo: почему рендерится всегда
@@ -401,7 +400,7 @@ src/
 - Эталонная разметка — `<div class="undo" hidden>`. Плашка живёт в DOM постоянно, видимость — через `hidden`
 - Раньше Undo рендерился условно — монтировался заново, CSS-анимация полоски запускалась некорректно
 - Теперь: `hidden={!pendingDelete}`, `pendingId={pendingDelete}`. Таймер в `useEffect` зависит от `[hidden, pendingId]`, перезапускается при смене `pendingId`
-- Полоска: фон дорожки (`.undo__timer`) и фон полоски (`.undo__timer-bar`) — разные переменные (`--timer-color` / `--timer-bar-color`). Иначе сужение не видно
+- Полоска: фон дорожки (`.undo__timer`) и фон полоски (`.undo__timer-bar`)
 
 ### React Hooks: под правила `eslint-plugin-react-hooks@7`
 
@@ -413,7 +412,6 @@ src/
 - Окно месяцев (выгрузка дальних) — при листании до 2050+ DOM разрастается
 - Автоматические тесты — не входят в скоуп
 - Подмена favicon по темам — не входит
-- Подключение favicon в `index.html` — открытый пункт
 
 ---
 
@@ -430,7 +428,7 @@ src/
 
 1. **SCSS + дополнительные модули** вместо минимальной стилизации
 2. **Доменные данные в ядре** (`core/eventStore.ts`), React только рендерит. В React — UI-состояние (`version`, `selectedDate`, `isModalOpen`, `editingId`, `pendingDelete`, `theme`)
-3. **SCSS только через `import './styles/style.scss'` в `main.tsx`**. `<link>` убран
+3. **SCSS только через `import './styles/style.scss'` в `main.tsx`**
 4. **Запрет прошлого** — на двух уровнях: `disabled` на кнопке edit + проверка в валидаторах
 5. **Все поля редактируемые в edit**, включая дату
 6. **Чекбокс «Весь день»** ставится автоматически только в edit, если событие изначально на весь день
