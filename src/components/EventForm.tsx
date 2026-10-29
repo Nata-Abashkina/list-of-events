@@ -81,7 +81,10 @@ export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: Eve
 
     const timeValue = allDay ? undefined : time;
 
-    const timeResult = validateTime(timeValue, isoDate, allDay);
+    const timeResult = validateTime(timeValue, isoDate, allDay, {
+      originalDate: editingEvent?.date,
+      allowPastIfUnchanged: editingEvent?.time,
+    });
     if (!timeResult.valid) {
       setTimeError(timeResult.error);
       return;

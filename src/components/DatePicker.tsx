@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import type { MonthConfig } from '../core/types';
-import { buildMonthConfig, fromISODate, todayISO } from '../core/dateUtils';
+import {
+  buildMonthConfig,
+  compareISO,
+  daysInMonth,
+  fromISODate,
+  todayISO,
+  toISODate,
+} from '../core/dateUtils';
 import { MonthGrid } from './MonthGrid';
 
 const MONTH_NAMES = [
@@ -19,6 +26,14 @@ interface DatePickerProps {
 
 type Mode = 'days' | 'months' | 'years';
 
+function lastDayOfMonthISO(year: number, month: number): string {
+  return toISODate(new Date(year, month, daysInMonth(year, month)));
+}
+
+function lastDayOfYearISO(year: number): string {
+  return `${year}-12-31`;
+}
+
 export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
   const initial = value ? fromISODate(value) : new Date();
   const [viewYear, setViewYear] = useState(initial.getFullYear());
@@ -26,8 +41,6 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
   const [mode, setMode] = useState<Mode>('days');
   const [lastValue, setLastValue] = useState(value);
 
-  // Синхронизация с внешним value через "adjusting state during render".
-  // Официальный паттерн React вместо useEffect + setState.
   if (value !== lastValue) {
     setLastValue(value);
     if (value) {
@@ -41,7 +54,22 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
 
   const minDate = min ?? todayISO();
 
+  const canGoPrev = (() => {
+    if (mode === 'days') {
+      const prevMonth = viewMonth === 0 ? 11 : viewMonth - 1;
+      const prevYear = viewMonth === 0 ? viewYear - 1 : viewYear;
+      return compareISO(lastDayOfMonthISO(prevYear, prevMonth), minDate) >= 0;
+    }
+    if (mode === 'months') {
+      return compareISO(lastDayOfYearISO(viewYear - 1), minDate) >= 0;
+    }
+
+    const prevWindowEnd = viewYear - 1;
+    return compareISO(lastDayOfYearISO(prevWindowEnd), minDate) >= 0;
+  })();
+
   const goPrev = () => {
+    if (!canGoPrev) return;
     if (mode === 'days') {
       if (viewMonth === 0) {
         setViewMonth(11);
@@ -72,16 +100,19 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
   };
 
   const handleDayClick = (iso: string) => {
+    if (compareISO(iso, minDate) < 0) return;
     onChange(iso);
     onPick();
   };
 
   const handleMonthClick = (m: number) => {
+    if (compareISO(lastDayOfMonthISO(viewYear, m), minDate) < 0) return;
     setViewMonth(m);
     setMode('days');
   };
 
   const handleYearClick = (y: number) => {
+    if (compareISO(lastDayOfYearISO(y), minDate) < 0) return;
     setViewYear(y);
     setMode('months');
   };
@@ -104,7 +135,12 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
   return (
     <div className="modal__calendar open">
       <div className="modal__navigation">
-        <button className="navigation__prev" type="button" onClick={goPrev}>
+        <button
+          className="navigation__prev"
+          type="button"
+          onClick={goPrev}
+          disabled={!canGoPrev}
+        >
           <img className="navigation__button" src="/svg/prev.svg" alt="Назад" />
         </button>
         <button
@@ -134,31 +170,40 @@ export function DatePicker({ value, onChange, onPick, min }: DatePickerProps) {
 
       {mode === 'months' && (
         <div className="modal__months">
-          {MONTH_NAMES.map((name, i) => (
-            <button
-              key={name}
-              className="modal__month-item"
-              type="button"
-              onClick={() => handleMonthClick(i)}
-            >
-              {name}
-            </button>
-          ))}
+          {MONTH_NAMES.map((name, i) => {
+            const isDisabled =
+              compareISO(lastDayOfMonthISO(viewYear, i), minDate) < 0;
+            return (
+              <button
+                key={name}
+                className={isDisabled ? 'modal__month-item is-disabled' : 'modal__month-item'}
+                type="button"
+                disabled={isDisabled}
+                onClick={() => handleMonthClick(i)}
+              >
+                {name}
+              </button>
+            );
+          })}
         </div>
       )}
 
       {mode === 'years' && (
         <div className="modal__years">
-          {years.map((y) => (
-            <button
-              key={y}
-              className="modal__year-item"
-              type="button"
-              onClick={() => handleYearClick(y)}
-            >
-              {y}
-            </button>
-          ))}
+          {years.map((y) => {
+            const isDisabled = compareISO(lastDayOfYearISO(y), minDate) < 0;
+            return (
+              <button
+                key={y}
+                className={isDisabled ? 'modal__year-item is-disabled' : 'modal__year-item'}
+                type="button"
+                disabled={isDisabled}
+                onClick={() => handleYearClick(y)}
+              >
+                {y}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

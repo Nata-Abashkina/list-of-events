@@ -34,7 +34,7 @@ export function Undo({
     <div className="undo" hidden={hidden}>
       <p className="undo__text">Событие удалено</p>
       <div className="undo__timer">
-        <div className="undo__timer-bar" />
+        <div className="undo__timer-bar" key={pendingId ?? 'idle'} />
       </div>
       <button className="undo__btn" type="button" onClick={onUndo}>
         Отмена

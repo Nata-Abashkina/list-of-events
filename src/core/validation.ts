@@ -37,10 +37,16 @@ export function validateDate(date: string): ValidationResult {
   return ok;
 }
 
+export interface ValidateTimeOptions {
+  allowPastIfUnchanged?: string;
+  originalDate?: string;
+}
+
 export function validateTime(
   time: string | undefined,
   date: string,
   allDay: boolean,
+  options?: ValidateTimeOptions,
 ): ValidationResult {
   if (allDay) return ok;
 
@@ -57,6 +63,11 @@ export function validateTime(
   const now = new Date();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   if (timeToMinutes(time) < nowMinutes) {
+    const unchangedToday =
+      options?.originalDate === date &&
+      options?.allowPastIfUnchanged !== undefined &&
+      options.allowPastIfUnchanged === time;
+    if (unchangedToday) return ok;
     return fail('Время не может быть в прошлом');
   }
 
