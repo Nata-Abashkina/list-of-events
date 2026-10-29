@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 interface UndoProps {
   onUndo: () => void;
-  onExpire: () => void;
+  onExpire: (pendingId: string) => void;
   duration?: number;
   hidden?: boolean;
   pendingId?: string | null;
@@ -16,13 +16,19 @@ export function Undo({
   hidden = false,
   pendingId = null,
 }: UndoProps) {
+  const onExpireRef = useRef(onExpire);
+
   useEffect(() => {
-    if (hidden) return;
+    onExpireRef.current = onExpire;
+  });
+
+  useEffect(() => {
+    if (hidden || !pendingId) return;
     const timer = window.setTimeout(() => {
-      onExpire();
+      onExpireRef.current(pendingId);
     }, duration);
     return () => window.clearTimeout(timer);
-  }, [hidden, pendingId, onExpire, duration]);
+  }, [hidden, pendingId, duration]);
 
   const node = (
     <div className="undo" hidden={hidden}>

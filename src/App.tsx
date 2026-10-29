@@ -20,57 +20,63 @@ export function App() {
 
   const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
-  const handleThemeToggle = () => {
-    const next: Theme = theme === 'light' ? 'dark' : 'light';
-    saveTheme(next);
-    applyTheme(document.documentElement, next);
-    setTheme(next);
-  };
+  const handleThemeToggle = useCallback(() => {
+    setTheme((prev) => {
+      const next: Theme = prev === 'light' ? 'dark' : 'light';
+      saveTheme(next);
+      applyTheme(document.documentElement, next);
+      return next;
+    });
+  }, []);
 
-  const handleDelete = (id: string) => {
-    if (pendingDelete && pendingDelete !== id) {
-      removeEvent(pendingDelete);
-    }
-    setPendingDelete(id);
-  };
+  const handleDelete = useCallback((id: string) => {
+    setPendingDelete((prev) => {
+      if (prev && prev !== id) removeEvent(prev);
+      return id;
+    });
+  }, []);
 
-  const handleUndo = () => {
+  const handleUndo = useCallback(() => {
     setPendingDelete(null);
-  };
+  }, []);
 
-  const handleExpire = () => {
-    if (pendingDelete) {
-      removeEvent(pendingDelete);
+  const handleExpire = useCallback(
+    (id: string) => {
+      removeEvent(id);
       setPendingDelete(null);
       refresh();
-    }
-  };
+    },
+    [refresh],
+  );
 
-  const handleAddClick = () => {
+  const handleAddClick = useCallback(() => {
     setEditingId(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditClick = (id: string) => {
+  const handleEditClick = useCallback((id: string) => {
     setEditingId(id);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setIsModalOpen(false);
     setEditingId(null);
-  };
+  }, []);
 
-  const handleSubmit = (data: { title: string; date: string; time?: string }) => {
-    if (editingId) {
-      updateEvent(editingId, data);
-    } else {
-      addEvent(data);
-    }
-    setIsModalOpen(false);
-    setEditingId(null);
-    refresh();
-  };
+  const handleSubmit = useCallback(
+    (data: { title: string; date: string; time?: string }) => {
+      if (editingId) {
+        updateEvent(editingId, data);
+      } else {
+        addEvent(data);
+      }
+      setIsModalOpen(false);
+      setEditingId(null);
+      refresh();
+    },
+    [editingId, refresh],
+  );
 
   const editingEvent = editingId
     ? getEvents().find((e) => e.id === editingId) ?? null
