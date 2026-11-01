@@ -1,4 +1,4 @@
-export interface Event {
+export interface EventItem {
   id: string;
   title: string;
   date: string;       // YYYY-MM-DD
@@ -7,7 +7,7 @@ export interface Event {
 
 export interface EventsStorage {
   version: number;
-  events: Event[];
+  events: EventItem[];
 }
 
 export interface CalendarCell {

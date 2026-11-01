@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Event } from '../core/types';
+import type { EventItem } from '../core/types';
 import { validateDate, validateTime, validateTitle } from '../core/validation';
 import { todayISO } from '../core/dateUtils';
 import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
 
 interface EventFormProps {
-  editingEvent: Event | null;
+  editingEvent: EventItem | null;
   initialDate: string;
   onSubmit: (data: { title: string; date: string; time?: string }) => void;
   onCancel: () => void;
