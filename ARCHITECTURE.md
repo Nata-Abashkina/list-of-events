@@ -40,7 +40,6 @@
 | React не знает, как считаются даты | Вся календарная арифметика — `core/dateUtils.ts`, чистые функции |
 | Доменные данные не живут в `useState` | События хранятся в `eventStore`, React читает по требованию |
 | Перерисовка через счётчик | UI-инкремент `version` триггерит ре-рендер вместо копии массива |
-| Zero runtime dependencies | `sass` — единственная dev-зависимость |
 | Инициализация до `createRoot` | `loadEvents()` → `applyTheme()` → рендер, чтобы не было вспышки темы |
 
 ---
@@ -412,6 +411,21 @@ src/
 - Окно месяцев (выгрузка дальних) — при листании до 2050+ DOM разрастается
 - Автоматические тесты — не входят в скоуп
 - Подмена favicon по темам — не входит
+
+---
+
+## Зависимости
+
+**Runtime (`dependencies`):**
+- `react`, `react-dom` — исключительно как слой отображения (UI Shell). Core Engine от React не зависит.
+
+**Dev (`devDependencies`):**
+- Сборка: `vite`, `@vitejs/plugin-react`
+- Типизация: `typescript`, `typescript-eslint`, `@types/*`
+- Линтинг: `eslint`, `@eslint/js`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`
+- Стили: `sass`
+
+Сторонних UI-библиотек, иконочных наборов и state-менеджеров нет.
 
 ---
 
