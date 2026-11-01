@@ -24,7 +24,13 @@ export function MonthGrid({ config, selectedDate, onDayClick, disabledBefore }: 
 
       {config.matrix.map((cell, i) => {
         if (cell.isEmpty) {
-          return <span key={i} className="calendar__day calendar__day--empty" />;
+          return (
+            <span
+              key={i}
+              className="calendar__day calendar__day--empty"
+              aria-hidden="true"
+            />
+          );
         }
 
         const isDisabled =
@@ -38,10 +44,11 @@ export function MonthGrid({ config, selectedDate, onDayClick, disabledBefore }: 
         if (isDisabled) classes.push('is-disabled');
 
         return (
-          <span
+          <button
             key={cell.date}
+            type="button"
             className={classes.join(' ')}
-            aria-disabled={isDisabled || undefined}
+            disabled={isDisabled}
             onClick={
               isDisabled || !cell.date || !onDayClick
                 ? undefined
@@ -49,7 +56,7 @@ export function MonthGrid({ config, selectedDate, onDayClick, disabledBefore }: 
             }
           >
             {cell.day}
-          </span>
+          </button>
         );
       })}
     </div>

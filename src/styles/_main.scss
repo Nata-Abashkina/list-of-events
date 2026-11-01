@@ -54,9 +54,19 @@
     font-size: 2.5rem;
     color: var(--text-color);
     cursor: pointer;
+    padding: 0;
+    letter-spacing: 0;
 
     &:hover {
       background-color: var(--day-bg-hover);
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--day-bg-hover);
+    }
+
+    &:disabled, &.is-disabled {
+      cursor: default;
     }
   }
 
