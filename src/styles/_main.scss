@@ -133,6 +133,13 @@
     &__button-logo {
       inline-size: 1.8rem;
     }
+
+    &__empty {
+      font-family: variables.$main-text;
+      font-size: 1.8rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
 }
 
 @media (max-width: 767px) {
