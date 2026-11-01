@@ -133,7 +133,7 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
     const container = containerRef.current;
     if (!container) return;
     const target = container.querySelector<HTMLElement>(
-      '.calendar__month:not(.innactive)',
+      '.calendar__month:not(.inactive)',
     );
     if (!target) return;
     const containerRect = container.getBoundingClientRect();
@@ -175,7 +175,7 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
           key={monthKey(config.year, config.month)}
           data-month={monthKey(config.year, config.month)}
           className={
-            isCurrentMonth(config) ? 'calendar__month' : 'calendar__month innactive'
+            isCurrentMonth(config) ? 'calendar__month' : 'calendar__month inactive'
           }
         >
           <h2 className="calendar__title">{config.label}</h2>

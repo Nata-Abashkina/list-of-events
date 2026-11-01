@@ -7,13 +7,9 @@ import {
   fromISODate,
   todayISO,
   toISODate,
+  MONTH_NAMES,
 } from '../core/dateUtils';
 import { MonthGrid } from './MonthGrid';
-
-const MONTH_NAMES = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
-];
 
 const YEARS_WINDOW = 12;
 

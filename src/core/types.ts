@@ -17,7 +17,6 @@ export interface CalendarCell {
   year: number | null;
   isToday: boolean;
   isWeekend: boolean;
-  isOutside: boolean;
   isEmpty: boolean;
   isFirstOfMonth: boolean;
 }

@@ -1,6 +1,6 @@
 import type { CalendarCell, MonthConfig } from './types';
 
-const MONTH_LABELS = [
+export const MONTH_NAMES = [
   'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
 ];
@@ -74,7 +74,6 @@ export function buildMonthMatrix(y: number, m: number): CalendarCell[] {
       year: y,
       isToday: date === today,
       isWeekend,
-      isOutside: false,
       isEmpty: false,
       isFirstOfMonth: day === 1,
     });
@@ -95,14 +94,13 @@ function emptyCell(): CalendarCell {
     year: null,
     isToday: false,
     isWeekend: false,
-    isOutside: false,
     isEmpty: true,
     isFirstOfMonth: false,
   };
 }
 
 export function buildMonthConfig(y: number, m: number): MonthConfig {
-  const label = m === 0 ? `${MONTH_LABELS[m]} ${y}` : MONTH_LABELS[m];
+  const label = m === 0 ? `${MONTH_NAMES[m]} ${y}` : MONTH_NAMES[m];
   return {
     year: y,
     month: m,
@@ -110,18 +108,4 @@ export function buildMonthConfig(y: number, m: number): MonthConfig {
     matrix: buildMonthMatrix(y, m),
     isYearStart: m === 0,
   };
-}
-
-export function buildMonthsRange(
-  centerY: number,
-  centerM: number,
-  back: number,
-  forward: number,
-): MonthConfig[] {
-  const result: MonthConfig[] = [];
-  for (let i = -back; i <= forward; i++) {
-    const d = new Date(centerY, centerM + i, 1);
-    result.push(buildMonthConfig(d.getFullYear(), d.getMonth()));
-  }
-  return result;
 }
