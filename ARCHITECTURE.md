@@ -16,10 +16,10 @@
 │  Header · Footer · Calendar · MonthGrid · EventList     │
 │  EventForm · DatePicker · TimePicker · Undo             │
 │                                                         │
-│  Состояние: version, selectedDate, isModalOpen,         │
+│  Состояние: selectedDate, isModalOpen,                  │
 │             editingId, pendingDelete, theme             │
 └────────────────────────┬────────────────────────────────┘
-                         │ подписка на version
+                         │ useSyncExternalStore(subscribe, getSnapshot)
                          ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   CORE ENGINE (чистый TS)               │
@@ -38,8 +38,8 @@
 | Принцип | Реализация |
 |---|---|
 | React не знает, как считаются даты | Вся календарная арифметика — `core/dateUtils.ts`, чистые функции |
-| Доменные данные не живут в `useState` | События хранятся в `eventStore`, React читает по требованию |
-| Перерисовка через счётчик | UI-инкремент `version` триггерит ре-рендер вместо копии массива |
+| Доменные данные не живут в `useState` | События хранятся в `eventStore`, React читает через `useSyncExternalStore` |
+| Перерисовка через внешнее хранилище | `App.tsx` подписан на `subscribe`/`getSnapshot`; `eventStore.notify()` перерисовывает подписчиков |
 | Инициализация до `createRoot` | `loadEvents()` → `applyTheme()` → рендер, чтобы не было вспышки темы |
 
 ---
@@ -49,13 +49,15 @@
 ### `types.ts` — модель данных
 
 ```ts
-interface Event {
+interface EventItem {
   id: string;
   title: string;
   date: string;        // YYYY-MM-DD
   time?: string;       // HH:mm; undefined = событие на весь день
 }
 ```
+
+Тип назван `EventItem`, а не `Event`, чтобы не перекрывать глобальный DOM-тип `Event`.
 
 **Соглашение по времени:**
 - `time === undefined` — пользователь **явно** поставил чекбокс «Весь день»
@@ -74,7 +76,6 @@ daysInMonth(y, m): number
 firstWeekdayOfMonth(y, m): number
 buildMonthMatrix(y, m): CalendarCell[]
 buildMonthConfig(y, m): MonthConfig
-buildMonthsRange(centerY, centerM, back, forward): MonthConfig[]
 timeToMinutes(t: string): number
 todayISO(): string
 compareISO(a, b): number          // лексикографическое сравнение ISO-строк
@@ -100,8 +101,9 @@ interface CalendarCell {
 ### `eventStore.ts` — хранилище
 
 - **localStorage**, ключ `list-of-events:events`
-- Версионированный объект `{ version: 1, events: Event[] }`
+- Версионированный объект `{ version: 1, events: EventItem[] }`
 - Запись при любом изменении, чтение на старте (`loadEvents()`), фолбэк на `[]` при ошибке парсинга
+- Подписка: `subscribe(listener)` / `getSnapshot()` — для `useSyncExternalStore` в `App.tsx`
 
 **Сортировка:**
 1. `date` по возрастанию
@@ -149,7 +151,6 @@ applyTheme(root: HTMLElement, t): void
 
 | Что | Где | Почему там |
 |---|---|---|
-| `version` | App | триггер ре-рендера после операций с ядром |
 | `selectedDate` | App | UI-выбор дня |
 | `isModalOpen`, `editingId` | App | модалка add/edit |
 | `pendingDelete` | App | механика Undo |
@@ -157,7 +158,7 @@ applyTheme(root: HTMLElement, t): void
 | `isCalendarOpen`, `dateWrapRef` | EventForm | только для DatePicker |
 | `isOpen`, `viewYear/Month`, `mode` | DatePicker / TimePicker | локально |
 
-Доменные данные (события) — **никогда** не в `useState`. React читает их через `getEventsByDate(selectedDate)`.
+Доменные данные (события) — **никогда** не в `useState`. React читает их через `useSyncExternalStore(subscribe, getSnapshot)` в `App.tsx`.
 
 ### Карта компонентов
 
@@ -178,43 +179,38 @@ EventForm.tsx (dialog.add.modal)
 
 ### `Calendar.tsx` — бесконечная лента
 
+- Окно месяцев фиксированного радиуса: `shiftWindow(delta)` сдвигает центр и **полностью пересобирает** окно `buildWindow(year, month)` — старые месяцы выгружаются, DOM не разрастается
 - Сентинелы **в потоке** (`.calendar__sentinel`), не `position: absolute`
-- `IntersectionObserver` с `root: container`, `rootMargin: '300px 0px'`
-- `loadBack` / `loadForward` — чистые updater-ы, проверка на дубликаты через `prev.some(...)`, никаких мутаций ref внутри updater-а
-- Якорное восстановление скролла: `captureAnchor()` + `useLayoutEffect`
+- `IntersectionObserver` с `root: container`, `rootMargin: '600px 0px'`
+- `loadBack` / `loadForward` — `shiftWindow(±SHIFT_SIZE)`
+- Якорное восстановление скролла: `pendingRestoreRef` + `useLayoutEffect` по `[months]`, поиск элемента по `data-month`
 - `data-month={year}-{month}` на `.calendar__month` (паддинг месяца до двух цифр)
 - `isCurrentMonth` фиксируется **на момент монтирования** через `useState(() => new Date())`
 
 **Константы:**
 ```ts
-INITIAL_BACK = 6;
-INITIAL_FORWARD = 6;
-LOAD_BACK = 3;
-LOAD_FORWARD = 3;
-ROOT_MARGIN = '300px 0px';
+WINDOW_RADIUS = 12;
+SHIFT_SIZE = 12;
+ROOT_MARGIN = '600px 0px';
 ```
-
-**Известное ограничение:** при листании до 2050+ DOM разрастается — окно месяцев (выгрузка дальних) в бэклоге.
 
 ### `EventList.tsx`
 
-- Пропсы: `selectedDate, version, pendingDelete, onDelete, onEdit`
+- Пропсы: `selectedDate, events, pendingDelete, onDelete, onEdit`
 - Событие с `id === pendingDelete` → `return null` внутри `map` (скрытие через рендер, не CSS-класс)
 - `formatDisplayDate(iso)` — локально в компоненте: `iso.split('-').reverse().join('.')`
 - Кнопка `edit` — `disabled={compareISO(event.date, todayISO()) < 0}`
 - Кнопка `delete` — работает всегда
 - Отступы между `<time>`, `<time>` и названием — в SCSS, в JSX `{' '}` не используется
+- Пустое состояние: «На этот день пока ничего не запланировано»
 
 ### `Undo.tsx` — почему рендерится всегда
 
-Эталонная разметка: `<div class="undo" hidden>`. Плашка живёт в DOM постоянно, видимость — через `hidden`.
-
-Раньше рендерился условно (`{pendingDelete && <Undo/>}`) → монтировался заново → некорректный запуск CSS-анимации полоски. Теперь:
-
 - `createPortal` в `document.body`, `position: fixed`
 - `hidden={!pendingDelete}`, `pendingId={pendingDelete}`
-- Таймер — `window.setTimeout(duration)` в `useEffect` с зависимостями `[hidden, pendingId, onExpire, duration]`
-- Второе удаление перекрывает первое: эффект перезапускается при смене `pendingId`
+- Таймер — `useEffect` с зависимостями `[hidden, pendingId, duration]`
+- `onExpire` держится в `useRef` (`onExpireRef`), чтобы ре-рендер `App` не перезапускал таймер
+- Перезапуск анимации при втором удалении — через `key={pendingId}` на `.undo__timer-bar`
 - Полоска: анимация `undo-countdown`, длительность в CSS (5s) соответствует `duration = 5000`, инлайн-стиль убран
 - Отдельная переменная `--timer-bar-color`: фон дорожки и фон полоски различаются, иначе сужение не видно
 
@@ -222,8 +218,8 @@ ROOT_MARGIN = '300px 0px';
 
 ```ts
 interface EventFormProps {
-  editingEvent: Event | null;   // null = add, Event = edit
-  initialDate: string;          // для add = selectedDate
+  editingEvent: EventItem | null;   // null = add, EventItem = edit
+  initialDate: string;              // для add = selectedDate
   onSubmit: (data: { title, date, time? }) => void;
   onCancel: () => void;
 }
@@ -293,8 +289,8 @@ interface TimePickerProps {
 3. Пока pending — событие в ядре и localStorage, но `EventList` его не рендерит
 4. `Undo` — `createPortal` в `document.body`, `position: fixed`, плашка всегда в DOM
 5. «Отмена» → `setPendingDelete(null)`, событие возвращается
-6. Через 5 секунд → `removeEvent(id)` + `setPendingDelete(null)` + `refresh()`
-7. Таймер перезапускается при смене `pendingId`
+6. Через 5 секунд → `removeEvent(id)` + `setPendingDelete(null)` — через `useSyncExternalStore`
+7. Таймер перезапускается только при смене `pendingId`; колбэк `onExpire` в `useRef`, ре-рендер не влияет
 
 ---
 
@@ -346,9 +342,9 @@ src/
 
 ### Бесконечная лента: почему именно так
 
+- Окно месяцев фиксированного радиуса — DOM не разрастается при листании до 2050+
 - Сентинелы в потоке, не absolute — иначе `IntersectionObserver` цепляется за позиционированный родитель
 - `root: container`, не viewport — скроллится колонка календаря, а не окно
-- Updater чистый, без мутаций ref — React 19 в StrictMode дважды вызывает reducer-ы, мутация внутри сломала бы state
 - Якорное восстановление скролла: `captureAnchor()` + `useLayoutEffect`, `anchorRef.current = null` всегда в конце
 - `data-month` на `.calendar__month` для дебага и якоря
 
@@ -364,7 +360,7 @@ src/
 
 - `EventForm` — тупой компонент. Вся логика формы внутри, наружу только `onSubmit` и `onCancel`
 - App владеет состоянием модалки (`isModalOpen`, `editingId`), EventForm — нет
-- `editingEvent: Event | null` в пропсах: один компонент на два режима
+- `editingEvent: EventItem | null` в пропсах: один компонент на два режима
 - Дата в поле — display-строка `ДД.ММ.ГГГГ`, конвертация в ISO на сабмите: пользователь видит привычный формат, ядро работает с ISO
 - Все поля редактируемые, включая дату в edit
 - Чекбокс «Весь день» ставится автоматически только в edit, если событие изначально на весь день. В add — никогда
@@ -398,8 +394,8 @@ src/
 
 - Эталонная разметка — `<div class="undo" hidden>`. Плашка живёт в DOM постоянно, видимость — через `hidden`
 - Раньше Undo рендерился условно — монтировался заново, CSS-анимация полоски запускалась некорректно
-- Теперь: `hidden={!pendingDelete}`, `pendingId={pendingDelete}`. Таймер в `useEffect` зависит от `[hidden, pendingId]`, перезапускается при смене `pendingId`
-- Полоска: фон дорожки (`.undo__timer`) и фон полоски (`.undo__timer-bar`)
+- Теперь: `hidden={!pendingDelete}`, `pendingId={pendingDelete}`. Таймер в `useEffect` зависит от `[hidden, pendingId, duration]`, `onExpire` — в `useRef`
+- Полоска: фон дорожки (`.undo__timer`) и фон полоски (`.undo__timer-bar`), перезапуск через `key={pendingId}`
 
 ### React Hooks: под правила `eslint-plugin-react-hooks@7`
 
@@ -408,20 +404,19 @@ src/
 
 ### Что можно улучшить
 
-- Окно месяцев (выгрузка дальних) — при листании до 2050+ DOM разрастается
 - Автоматические тесты — не входят в скоуп
 - Подмена favicon по темам — не входит
 
 ---
 
-## Зависимости
+## Стек и зависимости
 
 **Runtime (`dependencies`):**
-- `react`, `react-dom` — исключительно как слой отображения (UI Shell). Core Engine от React не зависит.
+- `react`, `react-dom` — исключительно слой отображения (UI Shell). Core Engine от React не зависит.
 
 **Dev (`devDependencies`):**
 - Сборка: `vite`, `@vitejs/plugin-react`
-- Типизация: `typescript`, `typescript-eslint`, `@types/*`
+- Типизация: `typescript`, `typescript-eslint`, `@types/react`, `@types/react-dom`, `@types/node`
 - Линтинг: `eslint`, `@eslint/js`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`
 - Стили: `sass`
 
@@ -441,10 +436,8 @@ src/
 ## Отклонения от исходного ТЗ
 
 1. **SCSS + дополнительные модули** вместо минимальной стилизации
-2. **Доменные данные в ядре** (`core/eventStore.ts`), React только рендерит. В React — UI-состояние (`version`, `selectedDate`, `isModalOpen`, `editingId`, `pendingDelete`, `theme`)
+2. **Доменные данные в ядре** (`core/eventStore.ts`), React только рендерит и читает через `useSyncExternalStore`. В React — UI-состояние (`selectedDate`, `isModalOpen`, `editingId`, `pendingDelete`, `theme`)
 3. **SCSS только через `import './styles/style.scss'` в `main.tsx`**
 4. **Запрет прошлого** — на двух уровнях: `disabled` на кнопке edit + проверка в валидаторах
 5. **Все поля редактируемые в edit**, включая дату
 6. **Чекбокс «Весь день»** ставится автоматически только в edit, если событие изначально на весь день
-
----

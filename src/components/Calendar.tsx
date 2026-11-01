@@ -8,16 +8,9 @@ interface CalendarProps {
   onSelectDate: (iso: string) => void;
 }
 
-const INITIAL_BACK = 6;
-const INITIAL_FORWARD = 6;
-const LOAD_BACK = 3;
-const LOAD_FORWARD = 3;
-const ROOT_MARGIN = '300px 0px';
-
-interface Anchor {
-  key: string;
-  offset: number;
-}
+const WINDOW_RADIUS = 12;
+const SHIFT_SIZE = 12;
+const ROOT_MARGIN = '600px 0px';
 
 function shiftMonth(year: number, month: number, delta: number) {
   const total = year * 12 + month + delta;
@@ -28,118 +21,73 @@ function monthKey(year: number, month: number) {
   return `${year}-${String(month).padStart(2, '0')}`;
 }
 
+function buildWindow(centerYear: number, centerMonth: number): MonthConfig[] {
+  const list: MonthConfig[] = [];
+  for (let i = -WINDOW_RADIUS; i <= WINDOW_RADIUS; i++) {
+    const { year, month } = shiftMonth(centerYear, centerMonth, i);
+    list.push(buildMonthConfig(year, month));
+  }
+  return list;
+}
+
 export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const topSentinelRef = useRef<HTMLDivElement | null>(null);
   const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
-  const anchorRef = useRef<Anchor | null>(null);
+  const pendingRestoreRef = useRef<string | null>(null);
 
   const [initialNow] = useState(() => new Date());
-
-  const [months, setMonths] = useState<MonthConfig[]>(() => {
-    const list: MonthConfig[] = [];
-    for (let i = -INITIAL_BACK; i <= INITIAL_FORWARD; i++) {
-      const { year, month } = shiftMonth(
-        initialNow.getFullYear(),
-        initialNow.getMonth(),
-        i,
-      );
-      list.push(buildMonthConfig(year, month));
-    }
-    return list;
-  });
+  const [center, setCenter] = useState(() => ({
+    year: initialNow.getFullYear(),
+    month: initialNow.getMonth(),
+  }));
+  const [months, setMonths] = useState<MonthConfig[]>(() =>
+    buildWindow(initialNow.getFullYear(), initialNow.getMonth()),
+  );
 
   const isCurrentMonth = useCallback(
-    (config: MonthConfig) => {
-      return (
-        config.year === initialNow.getFullYear() &&
-        config.month === initialNow.getMonth()
-      );
-    },
+    (config: MonthConfig) =>
+      config.year === initialNow.getFullYear() &&
+      config.month === initialNow.getMonth(),
     [initialNow],
   );
 
-  const captureAnchor = useCallback(() => {
-    if (anchorRef.current) return;
+  const shiftWindow = useCallback((delta: number) => {
+    setCenter((prevCenter) => {
+      const { year, month } = shiftMonth(prevCenter.year, prevCenter.month, delta);
 
-    const container = containerRef.current;
-    if (!container) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const monthEls = container.querySelectorAll<HTMLElement>('[data-month]');
-    for (const el of monthEls) {
-      const rect = el.getBoundingClientRect();
-      if (rect.bottom > containerRect.top) {
-        const key = el.dataset.month;
-        if (!key) continue;
-        anchorRef.current = { key, offset: rect.top - containerRect.top };
-        return;
+      const container = containerRef.current;
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        const monthEls = container.querySelectorAll<HTMLElement>('[data-month]');
+        for (const el of monthEls) {
+          const rect = el.getBoundingClientRect();
+          if (rect.bottom > containerRect.top) {
+            pendingRestoreRef.current = el.dataset.month ?? null;
+            break;
+          }
+        }
       }
-    }
-  }, []);
 
-  const loadBack = useCallback(() => {
-    captureAnchor();
-    setMonths((prev) => {
-      const first = prev[0];
-      const older: MonthConfig[] = [];
-      for (let i = LOAD_BACK; i >= 1; i--) {
-        const { year, month } = shiftMonth(first.year, first.month, -i);
-        older.push(buildMonthConfig(year, month));
-      }
-      const oldest = older[0];
-      const exists = prev.some(
-        (m) => m.year === oldest.year && m.month === oldest.month,
-      );
-      if (exists) return prev;
-      return [...older, ...prev];
-    });
-  }, [captureAnchor]);
-
-  const loadForward = useCallback(() => {
-    setMonths((prev) => {
-      const last = prev[prev.length - 1];
-      const newer: MonthConfig[] = [];
-      for (let i = 1; i <= LOAD_FORWARD; i++) {
-        const { year, month } = shiftMonth(last.year, last.month, i);
-        newer.push(buildMonthConfig(year, month));
-      }
-      const newest = newer[newer.length - 1];
-      const exists = prev.some(
-        (m) => m.year === newest.year && m.month === newest.month,
-      );
-      if (exists) return prev;
-      return [...prev, ...newer];
+      setMonths(buildWindow(year, month));
+      return { year, month };
     });
   }, []);
+
+  const loadBack = useCallback(() => shiftWindow(-SHIFT_SIZE), [shiftWindow]);
+  const loadForward = useCallback(() => shiftWindow(SHIFT_SIZE), [shiftWindow]);
 
   useLayoutEffect(() => {
-    const anchor = anchorRef.current;
+    const key = pendingRestoreRef.current;
     const container = containerRef.current;
-    if (!anchor || !container) return;
+    if (!key || !container) return;
 
-    const el = container.querySelector<HTMLElement>(
-      `[data-month="${anchor.key}"]`,
-    );
+    const el = container.querySelector<HTMLElement>(`[data-month="${key}"]`);
     if (el) {
-      const containerRect = container.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      container.scrollTop += elRect.top - containerRect.top - anchor.offset;
+      container.scrollTop = el.offsetTop - container.offsetTop;
     }
-    anchorRef.current = null;
+    pendingRestoreRef.current = null;
   }, [months]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const target = container.querySelector<HTMLElement>(
-      '.calendar__month:not(.inactive)',
-    );
-    if (!target) return;
-    const containerRect = container.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    container.scrollTop += targetRect.top - containerRect.top;
-  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -162,6 +110,17 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
     observer.observe(bottom);
     return () => observer.disconnect();
   }, [loadBack, loadForward]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const el = container.querySelector<HTMLElement>(
+      `[data-month="${monthKey(initialNow.getFullYear(), initialNow.getMonth())}"]`,
+    );
+    if (!el) return;
+    container.scrollTop = el.offsetTop - container.offsetTop;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="calendar" ref={containerRef}>

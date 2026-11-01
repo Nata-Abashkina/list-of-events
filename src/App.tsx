@@ -1,6 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useSyncExternalStore } from 'react';
 import { todayISO } from './core/dateUtils';
-import { removeEvent, addEvent, updateEvent, getEvents } from './core/eventStore';
+import {
+  removeEvent,
+  addEvent,
+  updateEvent,
+  subscribe,
+  getSnapshot,
+} from './core/eventStore';
 import { resolveInitialTheme, saveTheme, applyTheme } from './core/theme';
 import type { Theme } from './core/types';
 import { Header } from './components/Header';
@@ -11,14 +17,12 @@ import { Undo } from './components/Undo';
 import { EventForm } from './components/EventForm';
 
 export function App() {
-  const [version, setVersion] = useState(0);
+  const events = useSyncExternalStore(subscribe, getSnapshot);
   const [selectedDate, setSelectedDate] = useState<string>(todayISO());
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>(() => resolveInitialTheme());
-
-  const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
   const handleThemeToggle = useCallback(() => {
     setTheme((prev) => {
@@ -29,25 +33,22 @@ export function App() {
     });
   }, []);
 
-  const handleDelete = useCallback((id: string) => {
-    setPendingDelete((prev) => {
-      if (prev && prev !== id) removeEvent(prev);
-      return id;
-    });
-  }, []);
+  const handleDelete = useCallback(
+    (id: string) => {
+      if (pendingDelete && pendingDelete !== id) removeEvent(pendingDelete);
+      setPendingDelete(id);
+    },
+    [pendingDelete],
+  );
 
   const handleUndo = useCallback(() => {
     setPendingDelete(null);
   }, []);
 
-  const handleExpire = useCallback(
-    (id: string) => {
-      removeEvent(id);
-      setPendingDelete(null);
-      refresh();
-    },
-    [refresh],
-  );
+  const handleExpire = useCallback((id: string) => {
+    removeEvent(id);
+    setPendingDelete(null);
+  }, []);
 
   const handleAddClick = useCallback(() => {
     setEditingId(null);
@@ -73,13 +74,12 @@ export function App() {
       }
       setIsModalOpen(false);
       setEditingId(null);
-      refresh();
     },
-    [editingId, refresh],
+    [editingId],
   );
 
   const editingEvent = editingId
-    ? getEvents().find((e) => e.id === editingId) ?? null
+    ? events.find((e) => e.id === editingId) ?? null
     : null;
 
   return (
@@ -93,7 +93,7 @@ export function App() {
         <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
         <EventList
           selectedDate={selectedDate}
-          version={version}
+          events={events}
           pendingDelete={pendingDelete}
           onDelete={handleDelete}
           onEdit={handleEditClick}

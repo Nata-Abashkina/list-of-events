@@ -66,35 +66,26 @@ export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: Eve
     }
   };
 
-  const handleSubmit = () => {
-    setDateError('');
-    setTimeError('');
-    setTitleError('');
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     const isoDate = displayToISO(dateDisplay);
-
-    const dateResult = validateDate(isoDate);
-    if (!dateResult.valid) {
-      setDateError(dateResult.error);
-      return;
-    }
-
     const timeValue = allDay ? undefined : time;
 
-    const timeResult = validateTime(timeValue, isoDate, allDay, {
-      originalDate: editingEvent?.date,
-      allowPastIfUnchanged: editingEvent?.time,
-    });
-    if (!timeResult.valid) {
-      setTimeError(timeResult.error);
-      return;
-    }
-
+    const dateResult = validateDate(isoDate);
     const titleResult = validateTitle(title);
-    if (!titleResult.valid) {
-      setTitleError(titleResult.error);
-      return;
-    }
+    const timeResult = dateResult.valid
+      ? validateTime(timeValue, isoDate, allDay, {
+          originalDate: editingEvent?.date,
+          allowPastIfUnchanged: editingEvent?.time,
+        })
+      : ({ valid: true } as const);
+
+    setDateError(dateResult.valid ? '' : dateResult.error);
+    setTimeError(timeResult.valid ? '' : timeResult.error);
+    setTitleError(titleResult.valid ? '' : titleResult.error);
+
+    if (!dateResult.valid || !timeResult.valid || !titleResult.valid) return;
 
     onSubmit({
       title: title.trim(),
@@ -110,7 +101,7 @@ export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: Eve
       <h3 className="modal__title">
         {editingEvent ? 'Редактировать мероприятие' : 'Добавить мероприятие'}
       </h3>
-      <form className="modal__form" onSubmit={(e) => e.preventDefault()}>
+      <form className="modal__form" onSubmit={handleSubmit}>
         <div className="form__input" ref={dateWrapRef}>
           <p className="input__title">Выберите день</p>
           <input
@@ -167,7 +158,7 @@ export function EventForm({ editingEvent, initialDate, onSubmit, onCancel }: Eve
           <button className="modal__button cancel" type="button" onClick={onCancel}>
             Отменить
           </button>
-          <button className="modal__button save" type="button" onClick={handleSubmit}>
+          <button className="modal__button save" type="submit">
             Сохранить
           </button>
         </div>

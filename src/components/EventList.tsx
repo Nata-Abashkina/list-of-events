@@ -1,9 +1,10 @@
-import { getEventsByDate } from '../core/eventStore';
+import type { EventItem } from '../core/types';
 import { compareISO, todayISO } from '../core/dateUtils';
+import { sortEvents } from '../core/eventStore';
 
 interface EventListProps {
   selectedDate: string;
-  version: number;
+  events: EventItem[];
   pendingDelete: string | null;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
@@ -13,12 +14,11 @@ function formatDisplayDate(iso: string): string {
   return iso.split('-').reverse().join('.');
 }
 
-export function EventList({ selectedDate, version, pendingDelete, onDelete, onEdit }: EventListProps) {
-  void version;
-  const events = getEventsByDate(selectedDate);
+export function EventList({ selectedDate, events, pendingDelete, onDelete, onEdit }: EventListProps) {
   const today = todayISO();
-
-  const visibleEvents = events.filter((e) => e.id !== pendingDelete);
+  const visibleEvents = sortEvents(
+    events.filter((e) => e.date === selectedDate && e.id !== pendingDelete),
+  );
 
   return (
     <section className="events">
